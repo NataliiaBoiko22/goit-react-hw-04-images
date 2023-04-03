@@ -11,7 +11,7 @@ const App = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [cards, setCards] = useState([]);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
