@@ -7,7 +7,7 @@ import Button from '../Button/Button';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import Modal from '../Modal/Modal';
 
-const App = () => {
+ const App = () => {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [cards, setCards] = useState([]);
@@ -61,7 +61,7 @@ const App = () => {
   return (
     <div className={styles.App}>
       <Searchbar onSubmit={setSearch} />
-      <ImageGallery cards={cards} onShow={modalShow} />
+      {cards.length > 0 && <ImageGallery cards={cards} onShow={modalShow} />}
       {isLoading && <Loader />}
       {cards.length > 0 && !isLoading && <Button onClick={clickButton} />}
       {showModal && <Modal onClose={modalClose} image={largeImageURL} />}
