@@ -15,12 +15,14 @@ import Modal from '../Modal/Modal';
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
+  const [prevPage, setPrevPage] = useState(0);
 
   useEffect(() => {
     if (search !== '') {
       setIsLoading(true);
       setCards([]);
       setPage(1);
+      setPrevPage(0);
 
       fetchSearch(search, 1)
         .then((res) => setCards(res))
@@ -37,15 +39,22 @@ import Modal from '../Modal/Modal';
       setError(err);
     }
   };
-
-  const clickButton = () => {
-    setIsLoading(true);
-    setPage(page + 1);
-
-    fetchSearch(search, page + 1)
-      .then((res) => setCards([...cards, ...res]))
+  useEffect(() => {
+    if (page > 1 && !isLoading && page !== prevPage) {
+      setIsLoading(true);
+      setPrevPage(page);
+      
+      fetchSearch(search, page)
+      .then((res) => setCards((prevCards) => [...prevCards, ...res]))
       .catch((err) => setError(err))
       .finally(() => setIsLoading(false));
+     
+    }
+  }, [search, page, isLoading, prevPage ]);
+
+
+  const clickButton = () => {
+    setPage(page + 1);
   };
 
   const modalShow = (url) => {
