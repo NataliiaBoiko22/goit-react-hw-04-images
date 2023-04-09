@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './searchbar.module.css';
 import Notiflix from 'notiflix';
 
-const Searchbar = ({ onSubmit }) => {
+const Searchbar = ({ onSubmit, setCards, setPage }) => {
   const [search, setSearch] = useState('');
 
   const formChangeInput = (event) => {
@@ -16,6 +16,9 @@ const Searchbar = ({ onSubmit }) => {
       return;
     }
     onSubmit(search);
+    setCards([]);
+    setPage(1);
+
   };
 
   return (

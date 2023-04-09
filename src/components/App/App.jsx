@@ -15,21 +15,30 @@ import Modal from '../Modal/Modal';
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
-  const [prevPage, setPrevPage] = useState(0);
+  const [prevSearch, setPrevSearch] = useState('');
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   useEffect(() => {
-    if (search !== '') {
+    if (search !== prevSearch) {
       setIsLoading(true);
-      setCards([]);
-      setPage(1);
-      setPrevPage(0);
+      setPrevSearch(search);
+      setIsButtonClicked(false);
 
       fetchSearch(search, 1)
         .then((res) => setCards(res))
         .catch((err) => setError(err))
         .finally(() => setIsLoading(false));
+        
+    } else if (isButtonClicked && !isLoading) {
+      setIsLoading(true);
+      setIsButtonClicked(false);
+
+      fetchSearch(search, page + 1)
+        .then((res) => setCards((prevCards) => [...prevCards, ...res]))
+        .catch((err) => setError(err))
+        .finally(() => setIsLoading(false));
     }
-  }, [search]);
+  }, [search, page, isLoading, prevSearch, isButtonClicked]);
 
   const fetchSearch = async (value, page) => {
     try {
@@ -39,22 +48,11 @@ import Modal from '../Modal/Modal';
       setError(err);
     }
   };
-  useEffect(() => {
-    if (page > 1 && !isLoading && page !== prevPage) {
-      setIsLoading(true);
-      setPrevPage(page);
-      
-      fetchSearch(search, page)
-      .then((res) => setCards((prevCards) => [...prevCards, ...res]))
-      .catch((err) => setError(err))
-      .finally(() => setIsLoading(false));
-     
-    }
-  }, [search, page, isLoading, prevPage ]);
-
+ 
 
   const clickButton = () => {
-    setPage(page + 1);
+    setIsButtonClicked(true);
+    setPage((prevPage) => prevPage + 1);
   };
 
   const modalShow = (url) => {
@@ -69,7 +67,7 @@ import Modal from '../Modal/Modal';
 
   return (
     <div className={styles.App}>
-      <Searchbar onSubmit={setSearch} />
+      <Searchbar onSubmit={setSearch} setCards={setCards} setPage={setPage}/>
       {cards.length > 0 && <ImageGallery cards={cards} onShow={modalShow} />}
       {isLoading && <Loader />}
       {cards.length > 0 && !isLoading && <Button onClick={clickButton} />}
